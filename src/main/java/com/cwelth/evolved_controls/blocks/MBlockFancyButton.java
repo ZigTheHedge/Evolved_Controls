@@ -2,16 +2,12 @@ package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
-import com.cwelth.evolved_controls.blocks.utils.Utilities;
+import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.malisis.core.block.BoundingBoxType;
-import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.AABBUtils;
-import net.malisis.core.util.BlockPos;
-import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;

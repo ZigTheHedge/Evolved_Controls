@@ -1,4 +1,4 @@
-package com.cwelth.evolved_controls.blocks.utils;
+package com.cwelth.evolved_controls.utils;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

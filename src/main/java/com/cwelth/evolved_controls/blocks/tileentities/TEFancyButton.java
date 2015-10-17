@@ -1,8 +1,8 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.blocks.guis.GFancyButton;
-import com.cwelth.evolved_controls.blocks.utils.ITEAbstract;
-import com.cwelth.evolved_controls.blocks.utils.Utilities;
+import com.cwelth.evolved_controls.utils.ITEAbstract;
+import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.MalisisGui;
@@ -10,7 +10,6 @@ import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.inventory.MalisisSlot;
-import net.malisis.core.util.Timer;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,7 +20,6 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.Sys;
 
 /**
  * Created by zth on 14/10/15.
