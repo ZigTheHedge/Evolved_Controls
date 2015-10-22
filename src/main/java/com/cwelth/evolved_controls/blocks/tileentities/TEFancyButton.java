@@ -1,7 +1,6 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.blocks.guis.GFancyButton;
-import com.cwelth.evolved_controls.utils.ITEAbstract;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -11,6 +10,7 @@ import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.inventory.MalisisSlot;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 /**
  * Created by zth on 14/10/15.
  */
-public class TEFancyButton extends TileEntity implements ITEAbstract, IInventoryProvider {
+public class TEFancyButton extends TileEntity implements IInventoryProvider {
 
     private ForgeDirection direction = ForgeDirection.NORTH;
     protected long timeStart;
@@ -244,9 +244,13 @@ public class TEFancyButton extends TileEntity implements ITEAbstract, IInventory
         @Override
         public boolean isItemValid(ItemStack itemStack)
         {
-            Block biq = Block.getBlockFromItem(itemStack.getItem());
-            if(biq == null) return false;
-            return biq.isBlockNormalCube();
+            Item iStack = itemStack.getItem();
+            if(iStack != null) {
+                Block biq = Block.getBlockFromItem(iStack);
+                if (biq == null) return false;
+                return biq.isBlockNormalCube();
+            }
+            return false;
         }
     }
 }
