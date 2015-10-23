@@ -1,6 +1,7 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.blocks.guis.GFancyButton;
+import com.cwelth.evolved_controls.utils.Direction;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,7 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class TEFancyButton extends TileEntity implements IInventoryProvider {
 
-    private ForgeDirection direction = ForgeDirection.NORTH;
+    private Direction direction = new Direction(ForgeDirection.NORTH);
     protected long timeStart;
     public MalisisInventory inventory;
     public SolidSlot plateCamo;
@@ -67,12 +68,12 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
         return new GFancyButton(container, this);
     }
 
-    public ForgeDirection getDirection()
+    public Direction getDirection()
     {
         return direction;
     }
 
-    public void setDirection(ForgeDirection newDir)
+    public void setDirection(Direction newDir)
     {
         direction = newDir;
     }
@@ -147,7 +148,7 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
     public void writeToNBT(NBTTagCompound par1)
     {
         super.writeToNBT(par1);
-        par1.setInteger("direction", Utilities.dirToMeta(this.direction));
+        par1.setInteger("direction", direction.getMeta());
         par1.setInteger("state", state.ordinal());
         par1.setBoolean("moving", this.moving);
         par1.setLong("timeStart", this.timeStart);
@@ -175,7 +176,7 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
     @Override
     public void readFromNBT(NBTTagCompound par1) {
         super.readFromNBT(par1);
-        this.direction = Utilities.metaToDir(par1.getInteger("direction"));
+        this.direction = new Direction(par1.getInteger("direction"));
         this.state = State.values()[par1.getInteger("state")];
         this.moving = par1.getBoolean("moving");
         this.timeStart = par1.getLong("timeStart");
@@ -224,14 +225,7 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
     public void notifyNeighbors()
     {
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
-        if(getDirection() == ForgeDirection.NORTH)
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord-1, getBlockType());
-        if(getDirection() == ForgeDirection.EAST)
-            worldObj.notifyBlocksOfNeighborChange(xCoord+1, yCoord, zCoord, getBlockType());
-        if(getDirection() == ForgeDirection.SOUTH)
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord+1, getBlockType());
-        if(getDirection() == ForgeDirection.WEST)
-            worldObj.notifyBlocksOfNeighborChange(xCoord-1, yCoord, zCoord, getBlockType());
+        worldObj.notifyBlocksOfNeighborChange(xCoord+getDirection().getOffsetX(), yCoord+getDirection().getOffsetY(), zCoord+getDirection().getOffsetZ(), getBlockType());
     }
 
     public class SolidSlot extends MalisisSlot
