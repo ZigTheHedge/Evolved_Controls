@@ -1,18 +1,16 @@
 package com.cwelth.evolved_controls.blocks.renders;
 
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
+import com.cwelth.evolved_controls.utils.Direction;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
 import net.malisis.core.renderer.animation.AnimationRenderer;
-import net.malisis.core.renderer.animation.transformation.ChainedTransformation;
 import net.malisis.core.renderer.animation.transformation.Translation;
 import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.element.shape.Cube;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Created by zth on 14/10/15.
@@ -20,7 +18,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class MRendererFancyButton extends MalisisRenderer {
 
     private TEFancyButton te;
-    private ForgeDirection dir;
+    private Direction dir;
     private Shape buttonPlate;
     private Shape buttonItself;
     private AnimationRenderer ar = new AnimationRenderer();
@@ -61,9 +59,9 @@ public class MRendererFancyButton extends MalisisRenderer {
 
         te = (TEFancyButton) super.tileEntity;
         dir = te.getDirection();
-        setupRotation(buttonPlate);
-        setupRotation(buttonItself);
-        rp.direction.set(te.getDirection());
+        dir.setupRotation(buttonPlate);
+        dir.setupRotation(buttonItself);
+        rp.direction.set(dir.getForgeDirection());
 
 
         if (renderType == RenderType.TESR_WORLD)
@@ -102,22 +100,7 @@ public class MRendererFancyButton extends MalisisRenderer {
             rp.colorMultiplier.reset();
         }
 
-
         drawShape(buttonItself, rp);
-
-    }
-
-    private void setupRotation (Shape forForm) {
-        forForm.resetState();
-        if (dir == ForgeDirection.SOUTH) {
-            forForm.rotate(180, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.EAST) {
-            forForm.rotate(-90, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.WEST) {
-            forForm.rotate(90, 0, 1, 0, 0, 0, 0);
-        }
     }
 
     private int getColor(Block block)

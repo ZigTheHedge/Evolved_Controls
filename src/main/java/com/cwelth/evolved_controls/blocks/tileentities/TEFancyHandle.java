@@ -1,10 +1,8 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
+import com.cwelth.evolved_controls.utils.Direction;
 import com.cwelth.evolved_controls.utils.Utilities;
-import net.malisis.core.inventory.MalisisInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -16,7 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class TEFancyHandle extends TileEntity {
 
-    private ForgeDirection direction = ForgeDirection.NORTH;
+    private Direction direction = new Direction(ForgeDirection.NORTH);
     protected long timeStart;
 
     public enum State
@@ -27,7 +25,7 @@ public class TEFancyHandle extends TileEntity {
     protected boolean moving = false;
     private int animationLengthTicks = 6;
 
-    public ForgeDirection getDirection()
+    public Direction getDirection()
     {
         return this.direction;
     }
@@ -44,7 +42,7 @@ public class TEFancyHandle extends TileEntity {
         return this.state;
     }
 
-    public void setDirection(ForgeDirection direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
@@ -110,7 +108,7 @@ public class TEFancyHandle extends TileEntity {
     public void writeToNBT(NBTTagCompound par1)
     {
         super.writeToNBT(par1);
-        par1.setInteger("direction", Utilities.dirToMeta(this.direction));
+        par1.setInteger("direction", direction.getMeta());
         par1.setInteger("state", state.ordinal());
         par1.setBoolean("moving", this.moving);
         par1.setLong("timeStart", this.timeStart);
@@ -119,7 +117,7 @@ public class TEFancyHandle extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound par1) {
         super.readFromNBT(par1);
-        this.direction = Utilities.metaToDir(par1.getInteger("direction"));
+        this.direction = new Direction(par1.getInteger("direction"));
         this.state = State.values()[par1.getInteger("state")];
         this.moving = par1.getBoolean("moving");
         this.timeStart = par1.getLong("timeStart");

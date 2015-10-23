@@ -1,18 +1,16 @@
 package com.cwelth.evolved_controls.blocks.renders;
 
 
-import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
+import com.cwelth.evolved_controls.utils.Direction;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
 import net.malisis.core.renderer.animation.AnimationRenderer;
 import net.malisis.core.renderer.animation.transformation.Rotation;
-import net.malisis.core.renderer.animation.transformation.Translation;
 import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.element.shape.Cube;
 import net.malisis.core.renderer.model.MalisisModel;
-import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Created by ZtH on 21.10.2015.
@@ -20,7 +18,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class MRendererFancyHandle extends MalisisRenderer {
 
     private TEFancyHandle te;
-    private ForgeDirection dir;
     private Shape handlePlate;
     private Shape shapeShield;
 
@@ -78,12 +75,12 @@ public class MRendererFancyHandle extends MalisisRenderer {
             return;
 
         te = (TEFancyHandle) super.tileEntity;
-        dir = te.getDirection();
-        setupRotation(handlePlate);
-        setupRotation(shapeShield);
-        setupRotation(handleItself);
+        Direction dir = te.getDirection();
+        dir.setupRotation(handlePlate);
+        dir.setupRotation(shapeShield);
+        dir.setupRotation(handleItself);
 
-        rp.direction.set(te.getDirection());
+        rp.direction.set(dir.getForgeDirection());
 
         if (renderType == RenderType.TESR_WORLD)
             renderTileEntity();
@@ -107,25 +104,5 @@ public class MRendererFancyHandle extends MalisisRenderer {
         // Render handle itself
         //drawShape(buttonItself, rp);
 
-    }
-
-    private void setupRotation (MalisisModel forForm) {
-        forForm.resetState();
-        for(Shape singleShape: forForm)
-            setupRotation(singleShape);
-    }
-
-
-    private void setupRotation (Shape forForm) {
-        forForm.resetState();
-        if (dir == ForgeDirection.SOUTH) {
-            forForm.rotate(180, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.EAST) {
-            forForm.rotate(-90, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.WEST) {
-            forForm.rotate(90, 0, 1, 0, 0, 0, 0);
-        }
     }
 }

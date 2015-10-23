@@ -25,7 +25,6 @@ public class Blocks {
         GameRegistry.registerBlock(new MBlockFancyHandle("fancy_handle", Material.rock), "fancy_handle");
         GameRegistry.registerTileEntity(TEFancyHandle.class, "fancy_handle");
 
-
         initClient();
     }
 

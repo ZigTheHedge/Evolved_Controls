@@ -1,11 +1,8 @@
 package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
-import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
-import com.cwelth.evolved_controls.utils.Utilities;
-import net.malisis.core.inventory.IInventoryProvider;
-import net.malisis.core.inventory.MalisisInventory;
+import com.cwelth.evolved_controls.utils.Direction;
 import net.malisis.core.util.AABBUtils;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
@@ -14,16 +11,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import static net.minecraftforge.common.util.ForgeDirection.*;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
 
 /**
  * Created by ZtH on 21.10.2015.
@@ -32,8 +25,6 @@ public class MBlockFancyHandle extends Block implements ITileEntityProvider {
 
     public static int renderId = -1;
     private AxisAlignedBB defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, 0.1, 0, 0.9, 0.9, 0.05);
-
-
 
     protected MBlockFancyHandle(String unlocalizedName, Material material) {
         super(material);
@@ -54,18 +45,16 @@ public class MBlockFancyHandle extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public int onBlockPlaced(World world, int x, int y, int z, int side, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_){
-
+    public int onBlockPlaced(World world, int x, int y, int z, int side, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_) {
         ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-        int metadata = Utilities.dirToMeta(dir);
+        int metadata = new Direction(dir).getMeta();
         world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
-        return Utilities.dirToMeta(dir);
+        return metadata;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack){
-
-        ForgeDirection dir = Utilities.metaToDir(world.getBlockMetadata(x, y, z));
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
+        Direction dir = new Direction(world.getBlockMetadata(x, y, z));
         TEFancyHandle te = TileEntityUtils.getTileEntity(TEFancyHandle.class, world, x, y, z);
         if (te != null)
             te.setDirection(dir);
@@ -75,23 +64,18 @@ public class MBlockFancyHandle extends Block implements ITileEntityProvider {
 
     @Override
     public boolean canPlaceBlockOnSide (World world, int x, int y, int z, int side) {
-        ForgeDirection dir = ForgeDirection.getOrientation(side);
-        return (dir == NORTH && world.isSideSolid(x, y, z + 1, NORTH)) ||
-                (dir == SOUTH && world.isSideSolid(x, y, z - 1, SOUTH)) ||
-                (dir == WEST  && world.isSideSolid(x + 1, y, z, WEST)) ||
-                (dir == EAST  && world.isSideSolid(x - 1, y, z, EAST));
+        Direction dir = new Direction(ForgeDirection.getOrientation(side).getOpposite());
+        return !dir.isVertical() && dir.isSideSolid(world, x, y, z);
     }
 
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
-
+    public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z) {
         TEFancyHandle te = (TEFancyHandle)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
-            ForgeDirection dir = te.getDirection();
+            Direction dir = te.getDirection();
             te.setDirection(dir);
-            setBlockBounds(AABBUtils.rotate(defaultBoundingBox.copy(), Utilities.dirToMeta(dir)));
+            setBlockBounds(AABBUtils.rotate(defaultBoundingBox.copy(), dir.getMeta()));
         }
-
     }
 
     @Override
@@ -138,4 +122,18 @@ public class MBlockFancyHandle extends Block implements ITileEntityProvider {
         return renderId;
     }
 
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TEFancyHandle te = TileEntityUtils.getTileEntity(TEFancyHandle.class, world, x, y, z);
+        if (te == null)
+            return;
+
+        Direction dir = te.getDirection();
+        if(!dir.isSideSolid(world, x, y, z)) {
+            if(world.getBlock(x, y, z) == this) {
+                dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+                world.setBlockToAir(x, y, z);
+            }
+        }
+    }
 }

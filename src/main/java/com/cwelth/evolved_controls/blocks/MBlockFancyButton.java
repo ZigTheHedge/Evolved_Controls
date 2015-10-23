@@ -2,7 +2,7 @@ package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
-import com.cwelth.evolved_controls.utils.Utilities;
+import com.cwelth.evolved_controls.utils.Direction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.inventory.IInventoryProvider;
@@ -24,9 +24,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Random;
-
-import static net.minecraftforge.common.util.ForgeDirection.*;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 
 
 /**
@@ -54,27 +51,23 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
 
     @Override
     public boolean canPlaceBlockOnSide (World world, int x, int y, int z, int side) {
-        ForgeDirection dir = ForgeDirection.getOrientation(side);
-        return (dir == NORTH && world.isSideSolid(x, y, z + 1, NORTH)) ||
-                (dir == SOUTH && world.isSideSolid(x, y, z - 1, SOUTH)) ||
-                (dir == WEST  && world.isSideSolid(x + 1, y, z, WEST)) ||
-                (dir == EAST  && world.isSideSolid(x - 1, y, z, EAST));
-
+        Direction dir = new Direction(ForgeDirection.getOrientation(side).getOpposite());
+        return !dir.isVertical() && dir.isSideSolid(world, x, y, z);
     }
 
     @Override
     public int onBlockPlaced(World world, int x, int y, int z, int side, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_){
 
         ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-        int metadata = Utilities.dirToMeta(dir);
+        int metadata = new Direction(dir).getMeta();
         world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
-        return Utilities.dirToMeta(dir);
+        return metadata;
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack){
 
-        ForgeDirection dir = Utilities.metaToDir(world.getBlockMetadata(x, y, z));
+        Direction dir = new Direction(world.getBlockMetadata(x, y, z));
         TEFancyButton te = TileEntityUtils.getTileEntity(TEFancyButton.class, world, x, y, z);
         if (te != null)
             te.setDirection(dir);
@@ -160,9 +153,9 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
 
         TEFancyButton te = (TEFancyButton)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
-            ForgeDirection dir = te.getDirection();
+            Direction dir = te.getDirection();
             te.setDirection(dir);
-            setBlockBounds(AABBUtils.rotate(defaultBoundingBox.copy(), Utilities.dirToMeta(dir)));
+            setBlockBounds(AABBUtils.rotate(defaultBoundingBox.copy(), dir.getMeta()));
         }
 
     }
@@ -174,17 +167,6 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
         for (MalisisInventory inventory : provider.getInventories())
             inventory.breakInventory(world, x, y, z);
         super.breakBlock(world, x, y, z, block, metadata);
-    }
-
-    /**
-     * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
-     */
-    public boolean canPlaceBlockAt(World world, int x, int y, int z)
-    {
-        return (world.isSideSolid(x - 1, y, z, EAST)) ||
-                (world.isSideSolid(x + 1, y, z, WEST)) ||
-                (world.isSideSolid(x, y, z - 1, SOUTH)) ||
-                (world.isSideSolid(x, y, z + 1, NORTH));
     }
 
     public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int p_149709_5_)
@@ -202,8 +184,7 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random rand)
-    {
+    public void updateTick(World world, int x, int y, int z, Random rand) {
         TEFancyButton te = TileEntityUtils.getTileEntity(TEFancyButton.class, world, x, y, z);
         if (te == null)
             return;
@@ -214,5 +195,20 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
         te.pushMe();
         te.notifyNeighbors();
         world.markBlockForUpdate(x, y, z);
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TEFancyButton te = TileEntityUtils.getTileEntity(TEFancyButton.class, world, x, y, z);
+        if (te == null)
+            return;
+
+        Direction dir = te.getDirection();
+        if(!dir.isSideSolid(world, x, y, z)) {
+            if(world.getBlock(x, y, z) == this) {
+                dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+                world.setBlockToAir(x, y, z);
+            }
+        }
     }
 }
