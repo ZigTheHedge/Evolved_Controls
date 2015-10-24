@@ -14,31 +14,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Created by zth on 14/10/15.
  */
-public class TEFancyButton extends TileEntity implements IInventoryProvider {
+public class TEFancyButton extends TEGenericControl implements IInventoryProvider {
 
-    private ForgeDirection direction = ForgeDirection.NORTH;
-    protected long timeStart;
     public MalisisInventory inventory;
     public SolidSlot plateCamo;
     public SolidSlot buttonCamo;
-
-    public enum State
-    {
-        PUSHED, PUSHING, IDLE, IDELING
-    }
-    protected State state = State.IDLE;
-    protected boolean moving = false;
-    private int animationLengthTicks = 6;
     private int pressDelay = 32;
     public ItemStack isPlateCamo;
     public ItemStack isButtonCamo;
@@ -49,6 +34,14 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
         buttonCamo = new SolidSlot(1);
         inventory = new MalisisInventory(this, new MalisisSlot[] { plateCamo, buttonCamo });
         inventory.setInventoryStackLimit(1);
+    }
+
+    public int getPressDelay() {
+        return this.pressDelay;
+    }
+
+    public void setPressDelay(int pressDelay) {
+        this.pressDelay = pressDelay;
     }
 
     @Override
@@ -65,82 +58,6 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
     @Override
     public MalisisGui getGui(MalisisInventoryContainer container) {
         return new GFancyButton(container, this);
-    }
-
-    public ForgeDirection getDirection()
-    {
-        return direction;
-    }
-
-    public void setDirection(ForgeDirection newDir)
-    {
-        direction = newDir;
-    }
-
-    public void setStart()
-    {
-        this.setStart(System.currentTimeMillis());
-    }
-
-    public void setStart(long timeStart)
-    {
-        this.timeStart = timeStart;
-    }
-
-    public long getStart()
-    {
-        return timeStart;
-    }
-
-    public int getAnimationLengthTicks() { return animationLengthTicks; }
-
-    public int getPressDelay() { return pressDelay; }
-
-    public void setPressDelay(int newDelay) { this.pressDelay = newDelay; }
-
-    public State getState()
-    {
-        return state;
-    }
-
-    public boolean isMoving()
-    {
-        return moving;
-    }
-
-    public void pushMe()
-    {
-        State newState = (state == State.IDLE) ? State.PUSHING : State.IDELING;
-        setStart();
-        setNewState(newState);
-
-    }
-
-    public World getWorld()
-    {
-        return this.worldObj;
-    }
-
-    public void setNewState(State newState)
-    {
-        if (state == newState)
-            return;
-
-        state = newState;
-        if (worldObj == null) {
-            return;
-        }
-
-        if (state == State.IDELING || state == State.PUSHING)
-        {
-                moving = true;
-        }
-        else
-        {
-            moving = false;
-        }
-
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -190,48 +107,6 @@ public class TEFancyButton extends TileEntity implements IInventoryProvider {
                 this.buttonCamo.setItemStack(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
 
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
-    {
-        NBTTagCompound tag = pkt.getNbtCompound();
-        readFromNBT(tag);
-    }
-
-    public Packet getDescriptionPacket()
-    {
-        NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
-    }
-
-
-    @Override
-    public void updateEntity()
-    {
-        if (!moving)
-            return;
-
-        long ticksPassed = Utilities.timeToTick(System.currentTimeMillis() - getStart());
-        if (ticksPassed > animationLengthTicks) {
-            setNewState(state == State.PUSHING ? State.PUSHED : State.IDLE);
-            this.notifyNeighbors();
-        }
-    }
-
-
-    public void notifyNeighbors()
-    {
-        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
-        if(getDirection() == ForgeDirection.NORTH)
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord-1, getBlockType());
-        if(getDirection() == ForgeDirection.EAST)
-            worldObj.notifyBlocksOfNeighborChange(xCoord+1, yCoord, zCoord, getBlockType());
-        if(getDirection() == ForgeDirection.SOUTH)
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord+1, getBlockType());
-        if(getDirection() == ForgeDirection.WEST)
-            worldObj.notifyBlocksOfNeighborChange(xCoord-1, yCoord, zCoord, getBlockType());
     }
 
     public class SolidSlot extends MalisisSlot

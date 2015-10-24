@@ -2,6 +2,7 @@ package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
+import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -144,11 +145,11 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
             if (te == null)
                 return true;
 
-            if (te.getState() != TEFancyButton.State.IDLE)
+            if (te.getState() != TEFancyButton.State.OFF)
                 return true;
 
             te.pushMe();
-            if (te.getState() == TEFancyButton.State.PUSHING) {
+            if (te.getState() == TEFancyButton.State.TURNINGON) {
                 world.scheduleBlockUpdate(x, y, z, this, te.getAnimationLengthTicks() + te.getPressDelay());
             }
         }
@@ -189,12 +190,12 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
 
     public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int p_149709_5_)
     {
-        return ((TEFancyButton)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyButton.State.PUSHED ? 15 : 0;
+        return ((TEFancyButton)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyButton.State.ON ? 15 : 0;
     }
 
     public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side)
     {
-        return ((TEFancyButton)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyButton.State.PUSHED ? 15 : 0;
+        return ((TEFancyButton)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyButton.State.ON ? 15 : 0;
     }
     public boolean canProvidePower()
     {
@@ -208,7 +209,7 @@ public class MBlockFancyButton extends Block implements ITileEntityProvider {
         if (te == null)
             return;
 
-        if (te.getState() != TEFancyButton.State.PUSHED)
+        if (te.getState() != TEFancyButton.State.ON)
             return;
 
         te.pushMe();

@@ -24,7 +24,7 @@ public class ModMain implements IMalisisMod {
     public static final String MODID = "evolved_controls";
     public static final String VERSION = "0.1";
 
-    @Mod.Instance("dt_tweaks")
+    @Mod.Instance("evolved_controls")
     public static ModMain instance;
 
     public static MalisisNetwork network;

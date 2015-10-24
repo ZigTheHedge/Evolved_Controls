@@ -1,75 +1,77 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.utils.Utilities;
-import net.malisis.core.inventory.MalisisInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
- * Created by ZtH on 21.10.2015.
+ * Created by ZtH on 24.10.2015.
  */
-public class TEFancyHandle extends TileEntity {
-
-    private ForgeDirection direction = ForgeDirection.NORTH;
+public class TEGenericControl extends TileEntity {
+    protected ForgeDirection direction = ForgeDirection.NORTH;
     protected long timeStart;
-
     public enum State
     {
         OFF, TURNINGON, ON, TURNINGOFF
     }
     protected State state = State.OFF;
     protected boolean moving = false;
-    private int animationLengthTicks = 6;
-
-    public ForgeDirection getDirection()
-    {
-        return this.direction;
-    }
-
-    public long getStart() {
-        return this.timeStart;
-    }
+    protected int animationLengthTicks = 6;
 
     public int getAnimationLengthTicks() {
-        return this.animationLengthTicks;
+        return animationLengthTicks;
+    }
+
+    public void setAnimationLengthTicks(int animationLengthTicks) {
+        this.animationLengthTicks = animationLengthTicks;
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
     }
 
     public State getState() {
-        return this.state;
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public long getStart() {
+        return timeStart;
+    }
+
+    public void setStart() {
+        this.setStart(System.currentTimeMillis());
+    }
+
+    public void setStart(long timeStart) {
+        this.timeStart = timeStart;
+    }
+
+    public ForgeDirection getDirection() {
+        return direction;
     }
 
     public void setDirection(ForgeDirection direction) {
         this.direction = direction;
     }
 
-    public void setStart()
+    public World getWorld()
     {
-        this.setStart(System.currentTimeMillis());
+        return this.worldObj;
     }
 
-    public void setStart(long timeStart)
-    {
-        this.timeStart = timeStart;
-    }
-
-    public void pushMe()
-    {
-        State newState = (state == State.OFF) ? State.TURNINGON : State.TURNINGOFF;
-        setStart();
-        setNewState(newState);
-
-    }
-
-    public boolean isMoving()
-    {
-        return this.moving;
-    }
 
     public void setNewState(State newState)
     {
@@ -93,6 +95,13 @@ public class TEFancyHandle extends TileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    public void pushMe()
+    {
+        State newState = (state == State.OFF) ? State.TURNINGON : State.TURNINGOFF;
+        setStart();
+        setNewState(newState);
+    }
+
     @Override
     public void updateEntity()
     {
@@ -102,27 +111,21 @@ public class TEFancyHandle extends TileEntity {
         long ticksPassed = Utilities.timeToTick(System.currentTimeMillis() - getStart());
         if (ticksPassed > animationLengthTicks) {
             setNewState(state == State.TURNINGON ? State.ON : State.OFF);
-            //this.notifyNeighbors();
+            this.notifyNeighbors();
         }
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound par1)
+    public void notifyNeighbors()
     {
-        super.writeToNBT(par1);
-        par1.setInteger("direction", Utilities.dirToMeta(this.direction));
-        par1.setInteger("state", state.ordinal());
-        par1.setBoolean("moving", this.moving);
-        par1.setLong("timeStart", this.timeStart);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound par1) {
-        super.readFromNBT(par1);
-        this.direction = Utilities.metaToDir(par1.getInteger("direction"));
-        this.state = State.values()[par1.getInteger("state")];
-        this.moving = par1.getBoolean("moving");
-        this.timeStart = par1.getLong("timeStart");
+        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+        if(getDirection() == ForgeDirection.NORTH)
+            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord-1, getBlockType());
+        if(getDirection() == ForgeDirection.EAST)
+            worldObj.notifyBlocksOfNeighborChange(xCoord+1, yCoord, zCoord, getBlockType());
+        if(getDirection() == ForgeDirection.SOUTH)
+            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord+1, getBlockType());
+        if(getDirection() == ForgeDirection.WEST)
+            worldObj.notifyBlocksOfNeighborChange(xCoord-1, yCoord, zCoord, getBlockType());
     }
 
     @Override
@@ -139,5 +142,4 @@ public class TEFancyHandle extends TileEntity {
         writeToNBT(tag);
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
     }
-
 }
