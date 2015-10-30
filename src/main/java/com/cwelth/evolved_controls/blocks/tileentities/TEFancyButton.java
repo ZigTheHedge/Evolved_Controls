@@ -25,8 +25,6 @@ public class TEFancyButton extends TEGenericControl implements IInventoryProvide
     public SolidSlot plateCamo;
     public SolidSlot buttonCamo;
     private int pressDelay = 32;
-    public ItemStack isPlateCamo;
-    public ItemStack isButtonCamo;
 
 
     public TEFancyButton(){
@@ -109,23 +107,4 @@ public class TEFancyButton extends TEGenericControl implements IInventoryProvide
 
     }
 
-    public class SolidSlot extends MalisisSlot
-    {
-        public SolidSlot(int index)
-        {
-            super(index);
-        }
-
-        @Override
-        public boolean isItemValid(ItemStack itemStack)
-        {
-            Item iStack = itemStack.getItem();
-            if(iStack != null) {
-                Block biq = Block.getBlockFromItem(iStack);
-                if (biq == null) return false;
-                return biq.isBlockNormalCube();
-            }
-            return false;
-        }
-    }
 }

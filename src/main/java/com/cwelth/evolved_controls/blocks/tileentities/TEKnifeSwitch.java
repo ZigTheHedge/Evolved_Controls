@@ -1,6 +1,8 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
-import com.cwelth.evolved_controls.blocks.guis.GFancyHandle;
+import com.cwelth.evolved_controls.blocks.MBlockKnifeSwitch;
+import com.cwelth.evolved_controls.blocks.guis.GFancyButton;
+import com.cwelth.evolved_controls.blocks.guis.GKnifeSwitch;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -9,23 +11,23 @@ import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.inventory.MalisisSlot;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
 
-
 /**
- * Created by ZtH on 21.10.2015.
+ * Created by ZtH on 24.10.2015.
  */
-public class TEFancyHandle extends TEGenericControl implements IInventoryProvider {
+public class TEKnifeSwitch extends TEGenericControl implements IInventoryProvider {
 
     public MalisisInventory inventory;
     public SolidSlot plateCamo;
     public SolidSlot handleCamo;
 
-    public TEFancyHandle ()
-    {
+    public TEKnifeSwitch(){
         plateCamo = new SolidSlot(0);
         handleCamo = new SolidSlot(1);
         inventory = new MalisisInventory(this, new MalisisSlot[] { plateCamo, handleCamo });
@@ -45,7 +47,14 @@ public class TEFancyHandle extends TEGenericControl implements IInventoryProvide
     @SideOnly(Side.CLIENT)
     @Override
     public MalisisGui getGui(MalisisInventoryContainer container) {
-        return new GFancyHandle(container, this);
+        return new GKnifeSwitch(container, this);
+    }
+
+    @Override
+    public void updateEntity() {
+        super.updateEntity();
+        if(getState() == State.TURNINGON)
+            ((MBlockKnifeSwitch)this.getBlockType()).generateParticles(worldObj, xCoord, yCoord, zCoord, direction);
     }
 
     @Override
@@ -56,7 +65,6 @@ public class TEFancyHandle extends TEGenericControl implements IInventoryProvide
         par1.setInteger("state", state.ordinal());
         par1.setBoolean("moving", this.moving);
         par1.setLong("timeStart", this.timeStart);
-
 
         NBTTagList list = new NBTTagList();
 

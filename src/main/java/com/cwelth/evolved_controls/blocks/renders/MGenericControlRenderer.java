@@ -1,6 +1,5 @@
 package com.cwelth.evolved_controls.blocks.renders;
 
-import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -24,10 +23,14 @@ public abstract class MGenericControlRenderer extends MalisisRenderer {
     @Override
     protected void initialize () {
         rp = new RenderParameters();
+
+        rp.renderAllFaces.set(true);
+        rp.calculateAOColor.set(false);
         rp.useBlockBounds.set(false);
         rp.useEnvironmentBrightness.set(false);
         rp.calculateBrightness.set(false);
         rp.interpolateUV.set(false);
+        rp.useWorldSensitiveIcon.set(false);
     }
 
     @Override

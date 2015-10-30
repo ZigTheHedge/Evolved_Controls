@@ -3,6 +3,7 @@ package com.cwelth.evolved_controls.blocks.renders;
 
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
+import cpw.mods.fml.common.FMLLog;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -12,24 +13,24 @@ import net.malisis.core.renderer.animation.transformation.Translation;
 import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.element.shape.Cube;
 import net.malisis.core.renderer.model.MalisisModel;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Created by ZtH on 21.10.2015.
  */
-public class MRendererFancyHandle extends MalisisRenderer {
+public class MRendererFancyHandle extends MGenericControlRenderer {
 
     private TEFancyHandle te;
-    private ForgeDirection dir;
     private Shape handlePlate;
     private Shape shapeShield;
 
     private MalisisModel handleItself;
-    private AnimationRenderer ar = new AnimationRenderer();
-    protected RenderParameters rp;
 
     @Override
     protected void initialize () {
+        super.initialize();
 
         handlePlate = new Cube();
         handlePlate.setSize(0.8F, 0.8F, 0.05F);
@@ -67,14 +68,8 @@ public class MRendererFancyHandle extends MalisisRenderer {
         rp.interpolateUV.set(false);
     }
 
-    @Override
-    public void render () {
+    protected void renderTileEntity () {
         if (super.tileEntity == null)
-            return;
-
-        //rp.interpolateUV.set(true);
-
-        if (renderType == RenderType.ISBRH_WORLD)
             return;
 
         te = (TEFancyHandle) super.tileEntity;
@@ -85,12 +80,18 @@ public class MRendererFancyHandle extends MalisisRenderer {
 
         rp.direction.set(te.getDirection());
 
-        if (renderType == RenderType.TESR_WORLD)
-            renderTileEntity();
-    }
-
-    private void renderTileEntity () {
         ar.setStartTime(te.getStart());
+
+        if(te.plateCamo.getItemStack() != null) {
+            Block block = Block.getBlockFromItem(te.plateCamo.getItemStack().getItem());
+            int metadata = te.plateCamo.getItemStack().getMetadata();
+            rp.icon.set(block.getIcon(2, metadata));
+            rp.colorMultiplier.set(getColor(block));
+        }
+        else {
+            rp.icon.reset();
+            rp.colorMultiplier.reset();
+        }
 
         drawShape(handlePlate, rp);
         drawShape(shapeShield, rp);
@@ -101,31 +102,41 @@ public class MRendererFancyHandle extends MalisisRenderer {
         if(te.isMoving() || te.getState() == TEFancyHandle.State.ON)
             ar.animate(handleItself, rotateHandle);
 
+        if(te.handleCamo.getItemStack() != null) {
+            Block block = Block.getBlockFromItem(te.handleCamo.getItemStack().getItem());
+            int metadata = te.handleCamo.getItemStack().getMetadata();
+            rp.icon.set(block.getIcon(2, metadata));
+            rp.colorMultiplier.set(getColor(block));
+        } else {
+            rp.icon.reset();
+            rp.colorMultiplier.reset();
+        }
+
         handleItself.render(this, rp);
-        //ar.animate(buttonItself, pushTranslation);
-
-        // Render handle itself
-        //drawShape(buttonItself, rp);
-
-    }
-
-    private void setupRotation (MalisisModel forForm) {
-        forForm.resetState();
-        for(Shape singleShape: forForm)
-            setupRotation(singleShape);
     }
 
 
-    private void setupRotation (Shape forForm) {
-        forForm.resetState();
-        if (dir == ForgeDirection.SOUTH) {
-            forForm.rotate(180, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.EAST) {
-            forForm.rotate(-90, 0, 1, 0, 0, 0, 0);
-        }
-        else if (dir == ForgeDirection.WEST) {
-            forForm.rotate(90, 0, 1, 0, 0, 0, 0);
-        }
+    @Override
+    protected void renderInventory() {
+        handlePlate.resetState();
+        shapeShield.resetState();
+        handleItself.resetState();
+        handlePlate.translate(0, 0, 0.7F);
+        shapeShield.translate(0, 0, 0.7F);
+        handleItself.translate(0, 0, 0.7F);
+        handlePlate.scale(1.5F);
+        shapeShield.scale(1.5F);
+        handleItself.scale(1.5F, 1.5F, 1.5F, 0, 0, 0);
+        drawShape(handlePlate, rp);
+        drawShape(shapeShield, rp);
+        handleItself.render(this, rp);
+
     }
+
+    @Override
+    public boolean shouldRender3DInInventory(int modelId)
+    {
+        return true;
+    }
+
 }

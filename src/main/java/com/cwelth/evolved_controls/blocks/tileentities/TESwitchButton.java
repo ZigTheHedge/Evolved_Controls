@@ -1,6 +1,8 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
-import com.cwelth.evolved_controls.blocks.guis.GFancyHandle;
+import com.cwelth.evolved_controls.blocks.MBlockSwitchButton;
+import com.cwelth.evolved_controls.blocks.guis.GKnifeSwitch;
+import com.cwelth.evolved_controls.blocks.guis.GSwitchButton;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,18 +16,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
 
-
 /**
- * Created by ZtH on 21.10.2015.
+ * Created by ZtH on 24.10.2015.
  */
-public class TEFancyHandle extends TEGenericControl implements IInventoryProvider {
-
+public class TESwitchButton extends TEGenericControl implements IInventoryProvider {
     public MalisisInventory inventory;
     public SolidSlot plateCamo;
     public SolidSlot handleCamo;
 
-    public TEFancyHandle ()
-    {
+    public TESwitchButton(){
+        animationLengthTicks = 3;
         plateCamo = new SolidSlot(0);
         handleCamo = new SolidSlot(1);
         inventory = new MalisisInventory(this, new MalisisSlot[] { plateCamo, handleCamo });
@@ -45,7 +45,7 @@ public class TEFancyHandle extends TEGenericControl implements IInventoryProvide
     @SideOnly(Side.CLIENT)
     @Override
     public MalisisGui getGui(MalisisInventoryContainer container) {
-        return new GFancyHandle(container, this);
+        return new GSwitchButton(container, this);
     }
 
     @Override
@@ -56,7 +56,6 @@ public class TEFancyHandle extends TEGenericControl implements IInventoryProvide
         par1.setInteger("state", state.ordinal());
         par1.setBoolean("moving", this.moving);
         par1.setLong("timeStart", this.timeStart);
-
 
         NBTTagList list = new NBTTagList();
 
@@ -95,4 +94,23 @@ public class TEFancyHandle extends TEGenericControl implements IInventoryProvide
         }
     }
 
+    @Override
+    public void updateEntity()
+    {
+        if (!moving)
+            return;
+
+        long ticksPassed = Utilities.timeToTick(System.currentTimeMillis() - getStart());
+        if (ticksPassed > animationLengthTicks) {
+            setNewState(state == State.TURNINGON ? State.ON : State.OFF);
+            MBlockSwitchButton ctrl = (MBlockSwitchButton)worldObj.getBlock(xCoord, yCoord, zCoord);
+            /*
+            if(state == State.ON)
+                ctrl.setLightLevel(0.5F);
+            else
+                ctrl.setLightLevel(0);
+                */
+            this.notifyNeighbors();
+        }
+    }
 }

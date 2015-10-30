@@ -3,6 +3,7 @@ package com.cwelth.evolved_controls.blocks.renders;
 import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
+import cpw.mods.fml.common.FMLLog;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -33,7 +34,7 @@ public class MRendererFancyButton extends MGenericControlRenderer {
 
         buttonPlate = new Cube();
         buttonPlate.setSize(0.8F, 0.8F, 0.05F);
-        buttonPlate.interpolateUV();
+        //buttonPlate.interpolateUV();
         buttonPlate.translate(0.1F, 0.1F, 0F);
         buttonPlate.storeState();
 
@@ -44,8 +45,7 @@ public class MRendererFancyButton extends MGenericControlRenderer {
 
     }
 
-    @Override
-    public void render () {
+    protected void renderTileEntity() {
         if (super.tileEntity == null)
             return;
         te = (TEFancyButton) super.tileEntity;
@@ -54,10 +54,6 @@ public class MRendererFancyButton extends MGenericControlRenderer {
         setupRotation(buttonModel);
         rp.direction.set(te.getDirection());
 
-        super.render();
-    }
-
-    protected void renderTileEntity() {
         ar.setStartTime(te.getStart());
         Translation pushTranslation = new Translation(0, 0, 0, 0, 0, -0.049F).forTicks(te.getAnimationLengthTicks(), 0);
         pushTranslation.reversed(te.getState() == TEFancyButton.State.TURNINGOFF);
@@ -95,7 +91,21 @@ public class MRendererFancyButton extends MGenericControlRenderer {
 
     @Override
     protected void renderInventory() {
+        buttonPlate.resetState();
+        buttonModel.resetState();
+        buttonPlate.translate(0, 0, 0.7F);
+        buttonModel.translate(0, 0, 0.7F);
+        buttonPlate.scale(1.5F);
+        buttonModel.scale(1.5F, 1.5F, 1.5F, 0, 0, 0);
+        drawShape(buttonPlate, rp);
+        buttonModel.render(this, rp);
 
+    }
+
+    @Override
+    public boolean shouldRender3DInInventory(int modelId)
+    {
+        return true;
     }
 
 }

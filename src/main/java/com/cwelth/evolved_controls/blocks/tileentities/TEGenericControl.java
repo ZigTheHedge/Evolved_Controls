@@ -1,6 +1,10 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.utils.Utilities;
+import net.malisis.core.inventory.MalisisSlot;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -141,5 +145,25 @@ public class TEGenericControl extends TileEntity {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
+    }
+
+    public class SolidSlot extends MalisisSlot
+    {
+        public SolidSlot(int index)
+        {
+            super(index);
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack itemStack)
+        {
+            Item iStack = itemStack.getItem();
+            if(iStack != null) {
+                Block biq = Block.getBlockFromItem(iStack);
+                if (biq == null) return false;
+                return biq.isBlockNormalCube();
+            }
+            return false;
+        }
     }
 }
