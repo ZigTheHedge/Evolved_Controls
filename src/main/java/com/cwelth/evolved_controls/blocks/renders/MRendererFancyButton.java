@@ -93,11 +93,13 @@ public class MRendererFancyButton extends MGenericControlRenderer {
     protected void renderInventory() {
         buttonPlate.resetState();
         buttonModel.resetState();
-        buttonPlate.translate(0, 0, 0.7F);
-        buttonModel.translate(0, 0, 0.7F);
+        buttonPlate.translate(0, -0.1F, 0.7F);
+        buttonModel.translate(0, -0.1F, 0.7F);
         buttonPlate.scale(1.5F);
         buttonModel.scale(1.5F, 1.5F, 1.5F, 0, 0, 0);
+        rp.icon.set(Blocks.planks.getIcon(2, 0));
         drawShape(buttonPlate, rp);
+        rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
         buttonModel.render(this, rp);
 
     }

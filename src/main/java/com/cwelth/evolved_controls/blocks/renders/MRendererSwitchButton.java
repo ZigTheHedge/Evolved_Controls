@@ -10,6 +10,7 @@ import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.model.MalisisModel;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -96,30 +97,29 @@ public class MRendererSwitchButton extends MGenericControlRenderer {
             rp.colorMultiplier.reset();
         }
 
-        drawShape(switchHandle, rp);
         if(te.getState() == TEGenericControl.State.ON) {
+            drawShape(switchHandle, rp);
             rp.alpha.set(120);
-            rp.useEnvironmentBrightness.set(false);
             rp.brightness.set(15728880);
-            rp.icon.reset();
-            rp.colorMultiplier.set(0xFFFFFF);
             drawShape(switchHandleLit, rp);
             rp.alpha.reset();
-            rp.colorMultiplier.reset();
             rp.brightness.reset();
-            rp.useEnvironmentBrightness.set(true);
-        }
+        } else
+            drawShape(switchHandle, rp);
+
     }
 
     @Override
     protected void renderInventory() {
         switchPlate.resetState();
         switchHandle.resetState();
-        switchPlate.translate(0, 0, 0.7F);
-        switchHandle.translate(0, 0, 0.7F);
+        switchPlate.translate(0, -0.1F, 0.7F);
+        switchHandle.translate(0, -0.1F, 0.7F);
         switchPlate.scale(1.5F);
         switchHandle.scale(1.5F);
+        rp.icon.set(Blocks.planks.getIcon(2, 0));
         drawShape(switchPlate, rp);
+        rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
         drawShape(switchHandle, rp);
 
     }

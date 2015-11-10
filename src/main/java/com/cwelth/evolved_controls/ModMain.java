@@ -4,14 +4,13 @@ package com.cwelth.evolved_controls;
  * Created by zth on 13/10/15.
  */
 
-import com.cwelth.evolved_controls.blocks.Blocks;
+import com.cwelth.evolved_controls.blocks.ModBlocks;
 import com.cwelth.evolved_controls.network.NWFancyButton;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.relauncher.Side;
 import net.malisis.core.IMalisisMod;
 import net.malisis.core.MalisisCore;
 import net.malisis.core.configuration.Settings;
@@ -39,7 +38,7 @@ public class ModMain implements IMalisisMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e)
     {
-        Blocks.init();
+        ModBlocks.init();
 
         new NWFancyButton();
     }

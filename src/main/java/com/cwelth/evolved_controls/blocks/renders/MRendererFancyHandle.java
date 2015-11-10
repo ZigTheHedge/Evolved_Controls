@@ -118,17 +118,20 @@ public class MRendererFancyHandle extends MGenericControlRenderer {
 
     @Override
     protected void renderInventory() {
+
         handlePlate.resetState();
         shapeShield.resetState();
         handleItself.resetState();
-        handlePlate.translate(0, 0, 0.7F);
-        shapeShield.translate(0, 0, 0.7F);
-        handleItself.translate(0, 0, 0.7F);
+        handlePlate.translate(0, -0.1F, 0.7F);
+        shapeShield.translate(0, -0.1F, 0.7F);
+        handleItself.translate(0, -0.1F, 0.7F);
         handlePlate.scale(1.5F);
         shapeShield.scale(1.5F);
         handleItself.scale(1.5F, 1.5F, 1.5F, 0, 0, 0);
+        rp.icon.set(Blocks.planks.getIcon(2, 0));
         drawShape(handlePlate, rp);
         drawShape(shapeShield, rp);
+        rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
         handleItself.render(this, rp);
 
     }

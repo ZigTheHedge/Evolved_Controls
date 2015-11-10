@@ -104,12 +104,12 @@ public class TESwitchButton extends TEGenericControl implements IInventoryProvid
         if (ticksPassed > animationLengthTicks) {
             setNewState(state == State.TURNINGON ? State.ON : State.OFF);
             MBlockSwitchButton ctrl = (MBlockSwitchButton)worldObj.getBlock(xCoord, yCoord, zCoord);
-            /*
+
             if(state == State.ON)
-                ctrl.setLightLevel(0.5F);
+                ctrl.setLightLevel(0.2F);
             else
                 ctrl.setLightLevel(0);
-                */
+
             this.notifyNeighbors();
         }
     }

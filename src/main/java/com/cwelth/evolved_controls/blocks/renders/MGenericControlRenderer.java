@@ -31,6 +31,7 @@ public abstract class MGenericControlRenderer extends MalisisRenderer {
         rp.calculateBrightness.set(false);
         rp.interpolateUV.set(false);
         rp.useWorldSensitiveIcon.set(false);
+
     }
 
     @Override

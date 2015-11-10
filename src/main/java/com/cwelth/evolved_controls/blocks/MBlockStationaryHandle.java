@@ -1,37 +1,35 @@
 package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
-import com.cwelth.evolved_controls.blocks.renders.SparksEntityFX;
 import com.cwelth.evolved_controls.blocks.tileentities.TEKnifeSwitch;
+import com.cwelth.evolved_controls.blocks.tileentities.TEStationaryHandle;
 import com.cwelth.evolved_controls.utils.Utilities;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.AABBUtils;
+import net.malisis.core.util.MultiBlock;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
- * Created by ZtH on 24.10.2015.
+ * Created by ZtH on 30.10.2015.
  */
-public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEntityProvider {
-
+public class MBlockStationaryHandle extends MBlockGenericControl implements ITileEntityProvider {
     public static int renderId = -1;
 
-    public MBlockKnifeSwitch(String unlocalizedName, Material material)
+    public MBlockStationaryHandle(String unlocalizedName, Material material)
     {
         super(material);
 
@@ -44,22 +42,31 @@ public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEnti
         //this.setBlockBounds();
 
         this.setStepSound(soundTypeStone);
+
+        this.defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, 0, 0, 0.9, 2, 1);
+
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack){
 
         ForgeDirection dir = Utilities.metaToDir(world.getBlockMetadata(x, y, z));
-        TEKnifeSwitch te = TileEntityUtils.getTileEntity(TEKnifeSwitch.class, world, x, y, z);
+        TEStationaryHandle te = TileEntityUtils.getTileEntity(TEStationaryHandle.class, world, x, y, z);
         if (te != null)
             te.setDirection(dir);
         else
             System.out.println("TE is NULL! :(");
+        AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 2, 1);
+        MultiBlock mb = new MultiBlock(world, x, y, z);
+        mb.setDirection(dir);
+        mb.setBounds(aabb);
+        if (!mb.placeBlocks())
+            itemStack.stackSize++;
     }
 
     @Override
     public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_) {
-        return new TEKnifeSwitch();
+        return new TEStationaryHandle();
     }
 
     @Override
@@ -73,7 +80,7 @@ public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEnti
                 MalisisInventory.open((EntityPlayerMP) player, te);
             }
         } else {
-            TEKnifeSwitch te = TileEntityUtils.getTileEntity(TEKnifeSwitch.class, world, x, y, z);
+            TEStationaryHandle te = TileEntityUtils.getTileEntity(TEStationaryHandle.class, world, x, y, z);
             if (te == null)
                 return true;
 
@@ -88,7 +95,7 @@ public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEnti
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
 
-        TEKnifeSwitch te = (TEKnifeSwitch)blockAccess.getTileEntity(x,y,z);
+        TEStationaryHandle te = (TEStationaryHandle)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
             ForgeDirection dir = te.getDirection();
             te.setDirection(dir);
@@ -104,46 +111,16 @@ public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEnti
 
     public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int p_149709_5_)
     {
-        return ((TEKnifeSwitch)blockAccess.getTileEntity(x, y, z)).getState() == TEKnifeSwitch.State.ON ? 15 : 0;
+        return ((TEStationaryHandle)blockAccess.getTileEntity(x, y, z)).getState() == TEStationaryHandle.State.ON ? 15 : 0;
     }
 
     public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side)
     {
-        return ((TEKnifeSwitch)blockAccess.getTileEntity(x, y, z)).getState() == TEKnifeSwitch.State.ON ? 15 : 0;
+        return ((TEStationaryHandle)blockAccess.getTileEntity(x, y, z)).getState() == TEStationaryHandle.State.ON ? 15 : 0;
     }
 
     @Override
     public int getRenderType () {
         return renderId;
     }
-
-
-    @SideOnly(Side.CLIENT)
-    public void generateParticles(World worldObj, int xCoord, int yCoord, int zCoord, ForgeDirection direction)
-    {
-        if(!worldObj.isRemote)return;
-        double motionX = worldObj.rand.nextGaussian() * 0.02D;
-        double motionY = worldObj.rand.nextGaussian() * 0.02D;
-        double motionZ = worldObj.rand.nextGaussian() * 0.02D;
-        double x = xCoord + 0.25 + worldObj.rand.nextFloat() / 2;
-        double y = yCoord + 0.25 + worldObj.rand.nextFloat() / 2;
-        double z = zCoord + 0.25 + worldObj.rand.nextFloat() / 2;
-
-        double offset = 0.1;
-
-        if(direction == ForgeDirection.NORTH)
-            z = zCoord + offset;
-        if(direction == ForgeDirection.SOUTH)
-            z = zCoord + 1 + offset;
-        if(direction == ForgeDirection.EAST)
-            x = xCoord + 1 + offset;
-        if(direction == ForgeDirection.WEST)
-            x = xCoord + offset;
-
-        SparksEntityFX fx = new SparksEntityFX(worldObj, x, y, z, motionX, motionY, motionZ, Minecraft.getMinecraft().effectRenderer);
-
-        Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-
-    }
-
 }

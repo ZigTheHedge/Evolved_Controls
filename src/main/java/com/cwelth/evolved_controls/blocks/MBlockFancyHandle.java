@@ -1,10 +1,14 @@
 package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
+import com.cwelth.evolved_controls.blocks.renders.SparksEntityFX;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
 import com.cwelth.evolved_controls.blocks.tileentities.TEKnifeSwitch;
 import com.cwelth.evolved_controls.utils.Utilities;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.AABBUtils;
@@ -12,6 +16,7 @@ import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,5 +118,33 @@ public class MBlockFancyHandle extends MBlockGenericControl implements ITileEnti
     @Override
     public int getRenderType () {
         return renderId;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void generateParticles(World worldObj, int xCoord, int yCoord, int zCoord, ForgeDirection direction)
+    {
+        if(!worldObj.isRemote)return;
+        double motionX = worldObj.rand.nextGaussian() * 0.02D;
+        double motionY = worldObj.rand.nextGaussian() * 0.02D;
+        double motionZ = worldObj.rand.nextGaussian() * 0.02D;
+        double x = xCoord + 0.25 + worldObj.rand.nextFloat() / 2;
+        double y = yCoord + 0.25 + worldObj.rand.nextFloat() / 2;
+        double z = zCoord + 0.25 + worldObj.rand.nextFloat() / 2;
+
+        double offset = 0.1;
+
+        if(direction == ForgeDirection.NORTH)
+            z = zCoord + offset;
+        if(direction == ForgeDirection.SOUTH)
+            z = zCoord + 1 + offset;
+        if(direction == ForgeDirection.EAST)
+            x = xCoord + 1 + offset;
+        if(direction == ForgeDirection.WEST)
+            x = xCoord + offset;
+
+        SparksEntityFX fx = new SparksEntityFX(worldObj, x, y, z, motionX, motionY, motionZ, Minecraft.getMinecraft().effectRenderer);
+
+        Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+        FMLLog.info("generateParticles called!");
     }
 }
