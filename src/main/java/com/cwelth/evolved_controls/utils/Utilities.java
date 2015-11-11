@@ -13,6 +13,11 @@ public class Utilities {
     public static final int DIR_EAST = 1;
     public static final int DIR_SOUTH = 2;
 
+    public static final int SIDE_NORTH = 2;
+    public static final int SIDE_SOUTH = 3;
+    public static final int SIDE_WEST = 4;
+    public static final int SIDE_EAST = 5;
+
     public static int dirToMeta(ForgeDirection dir)
     {
         if (dir == ForgeDirection.NORTH)
@@ -22,6 +27,17 @@ public class Utilities {
         else if (dir == ForgeDirection.SOUTH)
             return DIR_SOUTH;
         return DIR_WEST;
+    }
+
+    public static int dirToSide(ForgeDirection dir)
+    {
+        if (dir == ForgeDirection.NORTH)
+            return SIDE_NORTH;
+        else if (dir == ForgeDirection.EAST)
+            return SIDE_EAST;
+        else if (dir == ForgeDirection.SOUTH)
+            return SIDE_SOUTH;
+        return SIDE_WEST;
     }
 
     public static ForgeDirection metaToDir(int metadata)

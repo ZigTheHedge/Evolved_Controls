@@ -1,6 +1,7 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
 import com.cwelth.evolved_controls.blocks.MBlockKnifeSwitch;
+import com.cwelth.evolved_controls.blocks.MBlockStationaryHandle;
 import com.cwelth.evolved_controls.blocks.guis.GKnifeSwitch;
 import com.cwelth.evolved_controls.blocks.guis.GStationaryHandle;
 import com.cwelth.evolved_controls.utils.Utilities;
@@ -90,6 +91,22 @@ public class TEStationaryHandle extends TEGenericControl implements IInventoryPr
                 this.plateCamo.setItemStack(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
             else if(slotNum == 1)
                 this.handleCamo.setItemStack(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
+        }
+    }
+
+    @Override
+    public void updateEntity()
+    {
+        if (!moving)
+            return;
+
+        if(getState() == State.TURNINGON)
+            ((MBlockStationaryHandle)this.getBlockType()).generateParticles(worldObj, xCoord, yCoord, zCoord, direction);
+
+        long ticksPassed = Utilities.timeToTick(System.currentTimeMillis() - getStart());
+        if (ticksPassed > animationLengthTicks*3) {
+            setNewState(state == State.TURNINGON ? State.ON : State.OFF);
+            this.notifyNeighbors();
         }
     }
 }

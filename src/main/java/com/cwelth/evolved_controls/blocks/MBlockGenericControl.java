@@ -1,10 +1,14 @@
 package com.cwelth.evolved_controls.blocks;
 
+import com.cwelth.evolved_controls.blocks.renders.SparksEntityFX;
+import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -31,6 +35,19 @@ public class MBlockGenericControl extends Block {
                 (dir == WEST  && world.isSideSolid(x + 1, y, z, WEST)) ||
                 (dir == EAST  && world.isSideSolid(x - 1, y, z, EAST));
 
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TEGenericControl te = (TEGenericControl)world.getTileEntity(x, y, z);
+        if(te != null){
+            ForgeDirection dir = te.getDirection();
+            if(!canPlaceBlockOnSide(world, x, y, z, Utilities.dirToSide(dir.getOpposite()))) {
+                world.setBlockToAir(x, y, z);
+                if(!world.isRemote)
+                    this.dropBlockAsItem(world, x, y, z, 0, 0);
+            }
+        }
     }
 
     @Override
@@ -90,5 +107,31 @@ public class MBlockGenericControl extends Block {
         return true;
     }
 
+    @SideOnly(Side.CLIENT)
+    public void generateParticles(World worldObj, int xCoord, int yCoord, int zCoord, ForgeDirection direction)
+    {
+        if(!worldObj.isRemote)return;
+        double motionX = worldObj.rand.nextGaussian() * 0.02D;
+        double motionY = worldObj.rand.nextGaussian() * 0.02D;
+        double motionZ = worldObj.rand.nextGaussian() * 0.02D;
+        double x = xCoord + 0.25 + worldObj.rand.nextFloat() / 2;
+        double y = yCoord + 0.25 + worldObj.rand.nextFloat() / 2;
+        double z = zCoord + 0.25 + worldObj.rand.nextFloat() / 2;
 
+        double offset = 0.1;
+
+        if(direction == ForgeDirection.NORTH)
+            z = zCoord + offset;
+        if(direction == ForgeDirection.SOUTH)
+            z = zCoord + 1 - offset;
+        if(direction == ForgeDirection.EAST)
+            x = xCoord + 1 - offset;
+        if(direction == ForgeDirection.WEST)
+            x = xCoord + offset;
+
+        SparksEntityFX fx = new SparksEntityFX(worldObj, x, y, z, motionX, motionY, motionZ, Minecraft.getMinecraft().effectRenderer);
+
+        Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+
+    }
 }

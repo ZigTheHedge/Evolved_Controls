@@ -118,32 +118,6 @@ public class MBlockKnifeSwitch extends MBlockGenericControl implements ITileEnti
     }
 
 
-    @SideOnly(Side.CLIENT)
-    public void generateParticles(World worldObj, int xCoord, int yCoord, int zCoord, ForgeDirection direction)
-    {
-        if(!worldObj.isRemote)return;
-        double motionX = worldObj.rand.nextGaussian() * 0.02D;
-        double motionY = worldObj.rand.nextGaussian() * 0.02D;
-        double motionZ = worldObj.rand.nextGaussian() * 0.02D;
-        double x = xCoord + 0.25 + worldObj.rand.nextFloat() / 2;
-        double y = yCoord + 0.25 + worldObj.rand.nextFloat() / 2;
-        double z = zCoord + 0.25 + worldObj.rand.nextFloat() / 2;
 
-        double offset = 0.1;
-
-        if(direction == ForgeDirection.NORTH)
-            z = zCoord + offset;
-        if(direction == ForgeDirection.SOUTH)
-            z = zCoord + 1 + offset;
-        if(direction == ForgeDirection.EAST)
-            x = xCoord + 1 + offset;
-        if(direction == ForgeDirection.WEST)
-            x = xCoord + offset;
-
-        SparksEntityFX fx = new SparksEntityFX(worldObj, x, y, z, motionX, motionY, motionZ, Minecraft.getMinecraft().effectRenderer);
-
-        Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-
-    }
 
 }

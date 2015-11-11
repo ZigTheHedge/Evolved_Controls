@@ -33,14 +33,11 @@ public class MRendererStationaryHandle extends MGenericControlRenderer {
 
         switchModel = new MalisisModel(rl);
         switchPlate = switchModel.getShape("base");
-        switchPlate.interpolateUV();
         switchPlate.storeState();
         if(switchPlate == null)
             System.out.println("switchPlate is null!");
         switchHandle = switchModel.getShape("handle");
-
         switchStopper = switchModel.getShape("stopper");
-
 
     }
 
@@ -55,32 +52,27 @@ public class MRendererStationaryHandle extends MGenericControlRenderer {
         setupRotation(switchHandle);
         setupRotation(switchStopper);
 
+        switchHandle.rotate(-10, 1, 0, 0, 0, -0.5F, 0);
+        switchStopper.rotate(-10, 1, 0, 0, 0, -0.5F, 0);
 
         rp.direction.set(te.getDirection());
 
         ar.setStartTime(te.getStart());
+
         Rotation switchLever = new Rotation(20, 1, 0, 0, 0, -0.5F, 0).forTicks(te.getAnimationLengthTicks(), te.getAnimationLengthTicks());
         switchLever.reversed(te.getState() == TEGenericControl.State.TURNINGOFF);
 
-        Rotation stopperTopPush = new Rotation(7, 1, 0, 0, 0, 0.80F, -0.06F).forTicks(20, 0);
-        Rotation stopperTopUnpush = new Rotation(-7, 1, 0, 0, 0, 0.80F, -0.06F).forTicks(20, 0);
-
-        Rotation stopperRot = new Rotation(20, 1, 0, 0, 0, -0.5F, 0).forTicks(te.getAnimationLengthTicks(), 0);
-        stopperRot.reversed(te.getState() == TEGenericControl.State.TURNINGOFF);
-
+        Rotation stopperTopPush = new Rotation(7, 1, 0, 0, 0, 0.70F, -0.1F).forTicks(te.getAnimationLengthTicks(), 0);
+        Rotation stopperTopUpPush = new Rotation(-7, 1, 0, 0, 0, 0.70F, -0.1F).forTicks(te.getAnimationLengthTicks(), te.getAnimationLengthTicks()*2-2);
         ChainedTransformation animateAll = new ChainedTransformation(stopperTopPush);
-        //animateAll.addTransformations(stopperRot);
-        animateAll.addTransformations(stopperTopUnpush);
+        animateAll.addTransformations(stopperTopUpPush);
 
 
         if(te.isMoving() || te.getState() == TEGenericControl.State.ON) {
-            //ar.animate(switchHandle, switchLever);
+            ar.animate(switchHandle, switchLever);
+            ar.animate(switchStopper, switchLever);
             ar.animate(switchStopper, animateAll);
         }
-
-        //switchHandle.rotate(-10, 1, 0, 0, 0, -0.5F, 0);
-        //switchStopper.rotate(-10, 1, 0, 0, 0, -0.5F, 0);
-
 
         if(te.plateCamo.getItemStack() != null) {
             Block block = Block.getBlockFromItem(te.plateCamo.getItemStack().getItem());
@@ -93,6 +85,7 @@ public class MRendererStationaryHandle extends MGenericControlRenderer {
             rp.colorMultiplier.reset();
         }
         //rp.setBrightness(15728880); //!!!!// !!!!s
+
         next(GL11.GL_POLYGON);
         drawShape(switchPlate, rp);
 
