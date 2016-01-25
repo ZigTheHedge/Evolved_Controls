@@ -1,10 +1,8 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
-import com.cwelth.evolved_controls.ModMain;
-import com.cwelth.evolved_controls.blocks.MBlockKnifeSwitch;
-import com.cwelth.evolved_controls.blocks.MBlockStationaryHandle;
-import com.cwelth.evolved_controls.blocks.guis.GKnifeSwitch;
-import com.cwelth.evolved_controls.blocks.guis.GStationaryHandle;
+import com.cwelth.evolved_controls.blocks.MBlockFancyHandle;
+import com.cwelth.evolved_controls.blocks.guis.GFancyHandle;
+import com.cwelth.evolved_controls.blocks.guis.GResistiveLever;
 import com.cwelth.evolved_controls.utils.Utilities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,14 +17,17 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
- * Created by ZtH on 30.10.2015.
+ * Created by zth on 12/11/15.
  */
-public class TEStationaryHandle extends TEGenericControl implements IInventoryProvider {
+public class TEResistiveLever extends TEGenericControl implements IInventoryProvider {
     public MalisisInventory inventory;
     public SolidSlot plateCamo;
     public SolidSlot handleCamo;
 
-    public TEStationaryHandle(){
+    public byte strength = 1;
+
+    public TEResistiveLever ()
+    {
         plateCamo = new SolidSlot(0);
         handleCamo = new SolidSlot(1);
         inventory = new MalisisInventory(this, new MalisisSlot[] { plateCamo, handleCamo });
@@ -46,7 +47,7 @@ public class TEStationaryHandle extends TEGenericControl implements IInventoryPr
     @SideOnly(Side.CLIENT)
     @Override
     public MalisisGui getGui(MalisisInventoryContainer container) {
-        return new GStationaryHandle(container, this);
+        return new GResistiveLever(container, this);
     }
 
     @Override
@@ -57,6 +58,8 @@ public class TEStationaryHandle extends TEGenericControl implements IInventoryPr
         par1.setInteger("state", state.ordinal());
         par1.setBoolean("moving", this.moving);
         par1.setLong("timeStart", this.timeStart);
+        par1.setByte("strength", this.strength);
+
 
         NBTTagList list = new NBTTagList();
 
@@ -84,6 +87,7 @@ public class TEStationaryHandle extends TEGenericControl implements IInventoryPr
         this.state = State.values()[par1.getInteger("state")];
         this.moving = par1.getBoolean("moving");
         this.timeStart = par1.getLong("timeStart");
+        this.strength = par1.getByte("strength");
 
         NBTTagList list = par1.getTagList("slotContents", 10);
         for(int i=0; i<list.tagCount(); i++) {
@@ -92,22 +96,6 @@ public class TEStationaryHandle extends TEGenericControl implements IInventoryPr
                 this.plateCamo.setItemStack(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
             else if(slotNum == 1)
                 this.handleCamo.setItemStack(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
-        }
-    }
-
-    @Override
-    public void updateEntity()
-    {
-        if (!moving)
-            return;
-
-        if(getState() == State.TURNINGON && worldObj.isRemote)
-            ModMain.proxy.startParticles(this);
-
-        long ticksPassed = Utilities.timeToTick(System.currentTimeMillis() - getStart());
-        if (ticksPassed > animationLengthTicks*3) {
-            setNewState(state == State.TURNINGON ? State.ON : State.OFF);
-            this.notifyNeighbors();
         }
     }
 }

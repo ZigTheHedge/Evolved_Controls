@@ -1,0 +1,16 @@
+[
+{
+  "modid": "evolved_controls",
+  "name": "Evolved Controls",
+  "description": "Just a couple of pretty controls to extend the vanilla ones.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ZigTheHedge"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": [mod_MinecraftForge]
+}
+]

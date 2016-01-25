@@ -61,11 +61,13 @@ public class MRendererFancyHandle extends MGenericControlRenderer {
         handleItself.rotate(25, 0, 0, 1, 0F, -0.3F, 0);
         handleItself.storeState();
 
+        /*
         rp = new RenderParameters();
         rp.useBlockBounds.set(false);
         rp.useEnvironmentBrightness.set(false);
         rp.calculateBrightness.set(false);
         rp.interpolateUV.set(false);
+        */
     }
 
     protected void renderTileEntity () {
@@ -90,6 +92,7 @@ public class MRendererFancyHandle extends MGenericControlRenderer {
         }
         else {
             rp.icon.reset();
+            rp.icon.set(Blocks.planks.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
@@ -109,6 +112,7 @@ public class MRendererFancyHandle extends MGenericControlRenderer {
             rp.colorMultiplier.set(getColor(block));
         } else {
             rp.icon.reset();
+            rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 

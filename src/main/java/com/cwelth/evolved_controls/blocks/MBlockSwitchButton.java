@@ -1,6 +1,7 @@
 package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
+import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
 import com.cwelth.evolved_controls.blocks.tileentities.TESwitchButton;
 import com.cwelth.evolved_controls.utils.Utilities;
 import net.malisis.core.inventory.IInventoryProvider;
@@ -80,6 +81,11 @@ public class MBlockSwitchButton extends MBlockGenericControl implements ITileEnt
                 return true;
 
             te.pushMe();
+            if(te.getState() == TEGenericControl.State.TURNINGON)
+                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.6F);
+            else
+                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.5F);
+
         }
         return true;
     }
@@ -87,7 +93,7 @@ public class MBlockSwitchButton extends MBlockGenericControl implements ITileEnt
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
 
-        TESwitchButton te = (TESwitchButton)blockAccess.getTileEntity(x,y,z);
+        TEGenericControl te = (TEGenericControl)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
             ForgeDirection dir = te.getDirection();
             te.setDirection(dir);

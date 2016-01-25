@@ -1,45 +1,33 @@
 package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
-import com.cwelth.evolved_controls.blocks.renders.SparksEntityFX;
-import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
-import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
-import com.cwelth.evolved_controls.blocks.tileentities.TEKnifeSwitch;
+import com.cwelth.evolved_controls.blocks.tileentities.TEResistiveLever;
 import com.cwelth.evolved_controls.utils.Utilities;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.AABBUtils;
 import net.malisis.core.util.TileEntityUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
-
 /**
- * Created by ZtH on 21.10.2015.
+ * Created by zth on 12/11/15.
  */
-public class MBlockFancyHandle extends MBlockGenericControl implements ITileEntityProvider {
+public class MBlockResistiveLever extends MBlockGenericControl implements ITileEntityProvider {
 
     public static int renderId = -1;
 
-    public MBlockFancyHandle(String unlocalizedName, Material material) {
+    protected MBlockResistiveLever(String unlocalizedName, Material material) {
         super(material);
 
         this.setUnlocalizedName(unlocalizedName);
@@ -54,14 +42,14 @@ public class MBlockFancyHandle extends MBlockGenericControl implements ITileEnti
 
     @Override
     public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_) {
-        return new TEFancyHandle();
+        return new TEResistiveLever();
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack){
 
         ForgeDirection dir = Utilities.metaToDir(world.getBlockMetadata(x, y, z));
-        TEFancyHandle te = TileEntityUtils.getTileEntity(TEFancyHandle.class, world, x, y, z);
+        TEResistiveLever te = TileEntityUtils.getTileEntity(TEResistiveLever.class, world, x, y, z);
         if (te != null)
             te.setDirection(dir);
         else
@@ -71,7 +59,7 @@ public class MBlockFancyHandle extends MBlockGenericControl implements ITileEnti
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
 
-        TEGenericControl te = (TEGenericControl)blockAccess.getTileEntity(x,y,z);
+        TEResistiveLever te = (TEResistiveLever)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
             ForgeDirection dir = te.getDirection();
             te.setDirection(dir);
@@ -94,37 +82,36 @@ public class MBlockFancyHandle extends MBlockGenericControl implements ITileEnti
 
         } else {
 
-            TEFancyHandle te = TileEntityUtils.getTileEntity(TEFancyHandle.class, world, x, y, z);
+            System.out.println("HitPoint: X = "+String.valueOf(hitX)+", Y = "+String.valueOf(hitY)+", Y = "+String.valueOf(hitZ));
+
+            /*
+            TEResistiveLever te = TileEntityUtils.getTileEntity(TEResistiveLever.class, world, x, y, z);
             if (te == null)
                 return true;
 
-            if (te.getState() == TEFancyHandle.State.TURNINGOFF || te.getState() == TEFancyHandle.State.TURNINGON)
+            if (te.getState() == TEResistiveLever.State.TURNINGOFF || te.getState() == TEResistiveLever.State.TURNINGON)
                 return true;
 
             te.pushMe();
-            if(te.getState() == TEGenericControl.State.TURNINGON)
-                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.6F);
-            else
-                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.5F);
-
+            */
         }
         return true;
     }
 
     public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int p_149709_5_)
     {
-        return ((TEFancyHandle)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyHandle.State.ON ? 15 : 0;
+        TEResistiveLever te = (TEResistiveLever)blockAccess.getTileEntity(x, y, z);
+        return (te.getState() == TEResistiveLever.State.ON) ? te.strength : 0;
     }
 
     public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side)
     {
-        return ((TEFancyHandle)blockAccess.getTileEntity(x, y, z)).getState() == TEFancyHandle.State.ON ? 15 : 0;
+        TEResistiveLever te = (TEResistiveLever)blockAccess.getTileEntity(x, y, z);
+        return (te.getState() == TEResistiveLever.State.ON) ? te.strength : 0;
     }
 
     @Override
     public int getRenderType () {
         return renderId;
     }
-
-
 }

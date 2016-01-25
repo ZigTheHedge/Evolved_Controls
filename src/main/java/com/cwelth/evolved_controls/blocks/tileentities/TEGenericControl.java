@@ -161,7 +161,7 @@ public class TEGenericControl extends TileEntity {
             if(iStack != null) {
                 Block biq = Block.getBlockFromItem(iStack);
                 if (biq == null) return false;
-                return biq.isBlockNormalCube();
+                return biq.isNormalCube();
             }
             return false;
         }

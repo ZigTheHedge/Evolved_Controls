@@ -24,13 +24,16 @@ public abstract class MGenericControlRenderer extends MalisisRenderer {
     protected void initialize () {
         rp = new RenderParameters();
 
-        rp.renderAllFaces.set(true);
+
+        rp.renderAllFaces.set(false);
         rp.calculateAOColor.set(false);
         rp.useBlockBounds.set(false);
         rp.useEnvironmentBrightness.set(false);
+        rp.brightness.reset();
         rp.calculateBrightness.set(false);
         rp.interpolateUV.set(false);
         rp.useWorldSensitiveIcon.set(false);
+        rp.useNormals.set(true);
 
     }
 
@@ -39,8 +42,11 @@ public abstract class MGenericControlRenderer extends MalisisRenderer {
         if (renderType == RenderType.ISBRH_WORLD)
             return;
 
-        if (renderType == RenderType.TESR_WORLD)
+        if (renderType == RenderType.TESR_WORLD) {
+            //rp.direction.set(dir);
+
             renderTileEntity();
+        }
 
         if (renderType == RenderType.ITEM_INVENTORY)
             renderInventory();

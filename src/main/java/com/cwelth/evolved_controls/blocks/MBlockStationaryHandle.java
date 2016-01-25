@@ -2,6 +2,7 @@ package com.cwelth.evolved_controls.blocks;
 
 import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.renders.SparksEntityFX;
+import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
 import com.cwelth.evolved_controls.blocks.tileentities.TEKnifeSwitch;
 import com.cwelth.evolved_controls.blocks.tileentities.TEStationaryHandle;
 import com.cwelth.evolved_controls.utils.Utilities;
@@ -51,7 +52,7 @@ public class MBlockStationaryHandle extends MBlockGenericControl implements ITil
 
         this.setStepSound(soundTypeStone);
 
-        this.defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, 0, 0, 0.9, 1, 1);
+        this.defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, 0, 0, 0.9, 2, 1);
 
     }
 
@@ -107,19 +108,25 @@ public class MBlockStationaryHandle extends MBlockGenericControl implements ITil
                 return true;
 
             te.pushMe();
+            if(te.getState() == TEGenericControl.State.TURNINGON)
+                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.6F);
+            else
+                world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.5F);
         }
         return true;
     }
 
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
-        TEStationaryHandle te;
+        TEGenericControl te;
         if(blockAccess.getBlockMetadata(x, y, z) == 8)
         {
-            te = (TEStationaryHandle)blockAccess.getTileEntity(x,y-1,z);
+            this.defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, -1, 0, 0.9, 1, 1);
+            te = (TEGenericControl)blockAccess.getTileEntity(x,y-1,z);
         } else
         {
-            te = (TEStationaryHandle)blockAccess.getTileEntity(x,y,z);
+            this.defaultBoundingBox = AxisAlignedBB.getBoundingBox(0.1, 0, 0, 0.9, 2, 1);
+            te = (TEGenericControl)blockAccess.getTileEntity(x,y,z);
         }
         if (te != null) {
             ForgeDirection dir = te.getDirection();
@@ -187,6 +194,7 @@ public class MBlockStationaryHandle extends MBlockGenericControl implements ITil
         return renderId;
     }
 
+    /*
     @Override
     @SideOnly(Side.CLIENT)
     public void generateParticles(World worldObj, int xCoord, int yCoord, int zCoord, ForgeDirection direction)
@@ -204,4 +212,5 @@ public class MBlockStationaryHandle extends MBlockGenericControl implements ITil
         Minecraft.getMinecraft().effectRenderer.addEffect(fx);
 
     }
+    */
 }

@@ -27,6 +27,7 @@ public class MRendererSwitchButton extends MGenericControlRenderer {
     @Override
     protected void initialize () {
         super.initialize();
+        rp.useEnvironmentBrightness.set(false);
 
         rl = new ResourceLocation(ModMain.MODID, "models/switch_button.obj");
         if(rl == null)
@@ -76,6 +77,7 @@ public class MRendererSwitchButton extends MGenericControlRenderer {
         }
         else {
             rp.icon.reset();
+            rp.icon.set(Blocks.planks.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
@@ -94,13 +96,14 @@ public class MRendererSwitchButton extends MGenericControlRenderer {
             rp.colorMultiplier.set(getColor(block));
         } else {
             rp.icon.reset();
+            rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
         if(te.getState() == TEGenericControl.State.ON) {
+            rp.brightness.set(15728880);
             drawShape(switchHandle, rp);
             rp.alpha.set(120);
-            rp.brightness.set(15728880);
             drawShape(switchHandleLit, rp);
             rp.alpha.reset();
             rp.brightness.reset();

@@ -4,8 +4,6 @@ import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.tileentities.TEFancyButton;
 import com.cwelth.evolved_controls.blocks.tileentities.TEGenericControl;
 import com.cwelth.evolved_controls.utils.Utilities;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.AABBUtils;
@@ -19,15 +17,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Random;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 
 
 /**
@@ -88,6 +83,7 @@ public class MBlockFancyButton extends MBlockGenericControl implements ITileEnti
                 return true;
 
             te.pushMe();
+            world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.6F);
             if (te.getState() == TEFancyButton.State.TURNINGON) {
                 world.scheduleBlockUpdate(x, y, z, this, te.getAnimationLengthTicks() + te.getPressDelay());
             }
@@ -98,7 +94,7 @@ public class MBlockFancyButton extends MBlockGenericControl implements ITileEnti
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z){
 
-        TEFancyButton te = (TEFancyButton)blockAccess.getTileEntity(x,y,z);
+        TEGenericControl te = (TEGenericControl)blockAccess.getTileEntity(x,y,z);
         if (te != null) {
             ForgeDirection dir = te.getDirection();
             te.setDirection(dir);
@@ -137,6 +133,7 @@ public class MBlockFancyButton extends MBlockGenericControl implements ITileEnti
             return;
 
         te.pushMe();
+        world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "random.click", 0.3F, 0.5F);
         te.notifyNeighbors();
         world.markBlockForUpdate(x, y, z);
     }

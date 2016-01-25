@@ -4,9 +4,9 @@ package com.cwelth.evolved_controls;
  * Created by zth on 13/10/15.
  */
 
-import com.cwelth.evolved_controls.blocks.ModBlocks;
 import com.cwelth.evolved_controls.network.NWFancyButton;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -21,10 +21,13 @@ public class ModMain implements IMalisisMod {
 
     public static final String NAME = "Evolved Controls";
     public static final String MODID = "evolved_controls";
-    public static final String VERSION = "0.1";
+    public static final String VERSION = "0.32";
 
     @Mod.Instance("evolved_controls")
     public static ModMain instance;
+
+    @SidedProxy(clientSide="com.cwelth.evolved_controls.ECClientProxy", serverSide="com.cwelth.evolved_controls.ECCommonProxy")
+    public static ECCommonProxy proxy;
 
     public static MalisisNetwork network;
 
@@ -38,7 +41,8 @@ public class ModMain implements IMalisisMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e)
     {
-        ModBlocks.init();
+        proxy.init();
+        proxy.initClient();
 
         new NWFancyButton();
     }

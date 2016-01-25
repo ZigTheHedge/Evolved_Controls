@@ -1,5 +1,6 @@
 package com.cwelth.evolved_controls.blocks.tileentities;
 
+import com.cwelth.evolved_controls.ModMain;
 import com.cwelth.evolved_controls.blocks.MBlockKnifeSwitch;
 import com.cwelth.evolved_controls.blocks.guis.GFancyButton;
 import com.cwelth.evolved_controls.blocks.guis.GKnifeSwitch;
@@ -53,8 +54,8 @@ public class TEKnifeSwitch extends TEGenericControl implements IInventoryProvide
     @Override
     public void updateEntity() {
         super.updateEntity();
-        if(getState() == State.TURNINGON)
-            ((MBlockKnifeSwitch)this.getBlockType()).generateParticles(worldObj, xCoord, yCoord, zCoord, direction);
+        if(getState() == State.TURNINGON && worldObj.isRemote)
+            ModMain.proxy.startParticles(this);
     }
 
     @Override

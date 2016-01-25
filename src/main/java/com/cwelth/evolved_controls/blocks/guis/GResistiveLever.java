@@ -1,7 +1,7 @@
 package com.cwelth.evolved_controls.blocks.guis;
 
-import com.cwelth.evolved_controls.blocks.tileentities.TEKnifeSwitch;
-import com.cwelth.evolved_controls.blocks.tileentities.TEStationaryHandle;
+import com.cwelth.evolved_controls.blocks.tileentities.TEFancyHandle;
+import com.cwelth.evolved_controls.blocks.tileentities.TEResistiveLever;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.MalisisGui;
 import net.malisis.core.client.gui.component.UISlot;
@@ -11,14 +11,15 @@ import net.malisis.core.client.gui.component.decoration.UILabel;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 
 /**
- * Created by ZtH on 30.10.2015.
+ * Created by zth on 12/11/15.
  */
-public class GStationaryHandle extends MalisisGui {
-    private TEStationaryHandle te;
+public class GResistiveLever extends MalisisGui {
+
+    private TEResistiveLever te;
     UISlot plateCamo;
     UISlot handleCamo;
 
-    public GStationaryHandle(MalisisInventoryContainer inventoryContainer, TEStationaryHandle tileEntity) {
+    public GResistiveLever(MalisisInventoryContainer inventoryContainer, TEResistiveLever tileEntity) {
         setInventoryContainer(inventoryContainer);
         this.te = tileEntity;
         guiscreenBackground = false;
@@ -46,8 +47,4 @@ public class GStationaryHandle extends MalisisGui {
 
         addToScreen(window);
     }
-
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-    }}
+}

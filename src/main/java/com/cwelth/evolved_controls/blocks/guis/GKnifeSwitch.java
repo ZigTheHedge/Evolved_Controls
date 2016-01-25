@@ -33,7 +33,7 @@ public class GKnifeSwitch extends MalisisGui {
         UIWindow window = new UIWindow(this, 200, 160).setPosition(0, 0, Anchor.CENTER | Anchor.MIDDLE).setZIndex(0);
 
         UILabel plateCamoLabel = new UILabel(this, "Plate texture").setPosition(16, 5, Anchor.LEFT);
-        UILabel buttonCamoLabel = new UILabel(this, "Button texture").setPosition(-1, 5, Anchor.RIGHT);
+        UILabel buttonCamoLabel = new UILabel(this, "Switch texture").setPosition(-1, 5, Anchor.RIGHT);
 
         window.add(plateCamoLabel);
         window.add(buttonCamoLabel);

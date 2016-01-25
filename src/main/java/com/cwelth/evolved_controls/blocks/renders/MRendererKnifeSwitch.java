@@ -69,6 +69,7 @@ public class MRendererKnifeSwitch extends MGenericControlRenderer {
         }
         else {
             rp.icon.reset();
+            rp.icon.set(Blocks.planks.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
@@ -88,6 +89,7 @@ public class MRendererKnifeSwitch extends MGenericControlRenderer {
             rp.colorMultiplier.set(getColor(block));
         } else {
             rp.icon.reset();
+            rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 

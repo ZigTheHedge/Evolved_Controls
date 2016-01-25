@@ -82,6 +82,7 @@ public class MRendererStationaryHandle extends MGenericControlRenderer {
         }
         else {
             rp.icon.reset();
+            rp.icon.set(Blocks.planks.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
         //rp.setBrightness(15728880); //!!!!// !!!!s
@@ -96,6 +97,7 @@ public class MRendererStationaryHandle extends MGenericControlRenderer {
             rp.colorMultiplier.set(getColor(block));
         } else {
             rp.icon.reset();
+            rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 

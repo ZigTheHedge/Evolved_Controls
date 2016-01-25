@@ -52,7 +52,7 @@ public class MRendererFancyButton extends MGenericControlRenderer {
         dir = te.getDirection();
         setupRotation(buttonPlate);
         setupRotation(buttonModel);
-        rp.direction.set(te.getDirection());
+        rp.direction.set(dir);
 
         ar.setStartTime(te.getStart());
         Translation pushTranslation = new Translation(0, 0, 0, 0, 0, -0.049F).forTicks(te.getAnimationLengthTicks(), 0);
@@ -66,6 +66,7 @@ public class MRendererFancyButton extends MGenericControlRenderer {
         }
         else {
             rp.icon.reset();
+            rp.icon.set(Blocks.planks.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
@@ -82,6 +83,7 @@ public class MRendererFancyButton extends MGenericControlRenderer {
             rp.colorMultiplier.set(getColor(block));
         } else {
             rp.icon.reset();
+            rp.icon.set(Blocks.cobblestone.getIcon(2, 0));
             rp.colorMultiplier.reset();
         }
 
