@@ -8,7 +8,7 @@ buildscript {
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+    }
 		maven {
 			name = 'sonatype-nexus'
 			url = 'https://oss.sonatype.org/content/repositories/public/'
@@ -21,7 +21,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7.10-0.1"
+version = "1.7.10-0.32"
 group= "com.cwelth.evolved_controls" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "evolved_controls"
 
@@ -44,7 +44,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-	compile 'net.malisis:malisiscore:1.7.10-0.12.9:dev'
+	compile 'net.malisis:malisiscore:1.7.10-0.14.1:dev'
 }
 
 processResources
